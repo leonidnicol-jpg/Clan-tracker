@@ -33,20 +33,24 @@ export async function GET(
     .select()
     .single();
 
-  if (clanRow) {
-    for (const member of data.memberList) {
-      await supabaseAdmin.from('members').upsert(
-        {
-          clan_id: clanRow.id,
-          tag: member.tag,
-          name: member.name,
-          role: member.role,
-          trophies: member.trophies,
-        },
-        { onConflict: 'clan_id,tag' }
-      );
-    }
-  }
+if (clanRow) {
+  const memberRows = data.memberList.map((member: {
+    tag: string;
+    name: string;
+    role: string;
+    trophies: number;
+  }) => ({
+    clan_id: clanRow.id,
+    tag: member.tag,
+    name: member.name,
+    role: member.role,
+    trophies: member.trophies,
+  }));
+
+  await supabaseAdmin
+    .from('members')
+    .upsert(memberRows, { onConflict: 'clan_id,tag' });
+}
 
   return NextResponse.json(data);
 }

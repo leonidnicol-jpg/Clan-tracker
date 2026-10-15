@@ -2,12 +2,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 async function getClan(tag: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/clan/${tag}`,
-    { cache: 'no-store' }
-  );
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:3000';
+  const res = await fetch(`${baseUrl}/api/clan/${tag}`, { cache: 'no-store' });
   if (!res.ok) return null;
   return res.json();
+}
 }
 
 export default async function ClanPage({

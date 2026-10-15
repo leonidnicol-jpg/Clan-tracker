@@ -43,6 +43,9 @@ async function pollWar(clan) {
     if (!memberId) continue;
     const attacks = m.attacks ?? [];
     const stars = attacks.reduce((s, a) => s + a.stars, 0);
+    const avgDestruction = attacks.length
+      ? attacks.reduce((s, a) => s + a.destructionPercentage, 0) / attacks.length
+      : 0;
 
     await supabase.from('war_participations').upsert(
       {
@@ -54,6 +57,7 @@ async function pollWar(clan) {
         attacks_used: attacks.length,
         attacks_possible: attacksPossible,
         stars,
+        avg_destruction: avgDestruction,
       },
       { onConflict: 'member_id,war_tag' }
     );
@@ -78,6 +82,9 @@ async function pollCWL(clan) {
       if (!memberId) continue;
       const attacks = m.attacks ?? [];
       const stars = attacks.reduce((s, a) => s + a.stars, 0);
+      const avgDestruction = attacks.length
+        ? attacks.reduce((s, a) => s + a.destructionPercentage, 0) / attacks.length
+        : 0;
 
       await supabase.from('war_participations').upsert(
         {
@@ -89,6 +96,7 @@ async function pollCWL(clan) {
           attacks_used: attacks.length,
           attacks_possible: 1,
           stars,
+          avg_destruction: avgDestruction,
         },
         { onConflict: 'member_id,war_tag' }
       );
