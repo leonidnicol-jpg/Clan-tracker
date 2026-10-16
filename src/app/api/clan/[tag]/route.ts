@@ -1,56 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { getClanData } from '@/lib/getClanData';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ tag: string }> }
 ) {
   const { tag } = await params;
-  const clanTag = `#${tag.toUpperCase()}`;
-
-  const res = await fetch(
-    `https://cocproxy.royaleapi.dev/v1/clans/${encodeURIComponent(clanTag)}`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.SUPERCELL_API_TOKEN}`,
-      },
-      cache: 'no-store',
-    }
-  );
-
-  if (!res.ok) {
-    return NextResponse.json(
-      { error: 'Clan not found or API error' },
-      { status: res.status }
-    );
+  const data = await getClanData(tag);
+  if (!data) {
+    return NextResponse.json({ error: 'Clan not found or API error' }, { status: 404 });
   }
-
-  const data = await res.json();
-
-  const { data: clanRow } = await supabaseAdmin
-    .from('clans')
-    .upsert({ tag: clanTag, name: data.name }, { onConflict: 'tag' })
-    .select()
-    .single();
-
-if (clanRow) {
-  const memberRows = data.memberList.map((member: {
-    tag: string;
-    name: string;
-    role: string;
-    trophies: number;
-  }) => ({
-    clan_id: clanRow.id,
-    tag: member.tag,
-    name: member.name,
-    role: member.role,
-    trophies: member.trophies,
-  }));
-
-  await supabaseAdmin
-    .from('members')
-    .upsert(memberRows, { onConflict: 'clan_id,tag' });
-}
-
   return NextResponse.json(data);
 }

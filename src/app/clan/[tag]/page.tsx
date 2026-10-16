@@ -1,14 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-
-async function getClan(tag: string) {
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : 'http://localhost:3000';
-  const res = await fetch(`${baseUrl}/api/clan/${tag}`, { cache: 'no-store' });
-  if (!res.ok) return null;
-  return res.json();
-}
+import { getClanData } from '@/lib/getClanData';
 
 export default async function ClanPage({
   params,
@@ -16,7 +8,7 @@ export default async function ClanPage({
   params: Promise<{ tag: string }>;
 }) {
   const { tag } = await params;
-  const clan = await getClan(tag);
+  const clan = await getClanData(tag);
 
   if (!clan) {
     return (
