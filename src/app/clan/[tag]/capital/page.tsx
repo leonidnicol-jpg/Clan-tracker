@@ -27,7 +27,7 @@ export default async function CapitalHistoryPage({
 
   const { data: rows } = await supabaseAdmin
     .from('capital_participations')
-    .select('raid_weekend_end_date, capital_resources_looted, members(name)')
+    .select('raid_weekend_end_date, capital_resources_looted, attacks_used, members(name)')
     .eq('clan_id', clan.id)
     .order('capital_resources_looted', { ascending: false });
 
@@ -66,7 +66,7 @@ export default async function CapitalHistoryPage({
                     <p className="font-bold text-amber-950">
                       {(r.members as unknown as { name: string })?.name ?? 'Unknown'}
                     </p>
-                    <p className="text-amber-900 font-bold">💰 {r.capital_resources_looted} points</p>
+                    <p className="text-amber-900 font-bold">  💰 {r.capital_resources_looted} points · {r.attacks_used} attacks</p>
                   </div>
                 ))}
               </div>

@@ -122,6 +122,7 @@ async function pollCapital(clan) {
           raid_weekend_id: season.endTime,
           raid_weekend_end_date: toDate(season.endTime),
           capital_resources_looted: m.capitalResourcesLooted ?? 0,
+          attacks_used: m.attacks ?? 0,
         },
         { onConflict: 'member_id,raid_weekend_id' }
       );

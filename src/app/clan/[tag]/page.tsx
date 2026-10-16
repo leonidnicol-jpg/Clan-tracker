@@ -9,7 +9,6 @@ async function getClan(tag: string) {
   if (!res.ok) return null;
   return res.json();
 }
-}
 
 export default async function ClanPage({
   params,
