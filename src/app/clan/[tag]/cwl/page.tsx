@@ -45,7 +45,7 @@ export default async function WarsHistoryPage({
         <Link href={`/clan/${tag}`} className="text-amber-100 font-bold">
           ←
         </Link>
-        <“CWL History” className="text-white font-black text-xl">Clan Wars History</“CWL History”>
+        <h1 className="text-white font-black text-xl">CWL History</h1>
       </header>
 
       <div className="p-4">
